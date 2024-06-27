@@ -5,10 +5,9 @@ const Carrier = require('../models/Carrier');
 
 // Get all carriers
 router.get('/', async (req, res) => {
-  console.log('hello');
   try {
     const carriers = await Carrier.find();
-    console.log(carriers);
+
     res.json(carriers);
   } catch (err) {
     res.status(500).json({ message: err.message });
