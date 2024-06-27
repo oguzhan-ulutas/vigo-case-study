@@ -25,18 +25,19 @@ async function main() {
   console.log('Connected to database!!');
 }
 
-// Cors
-const allowedOrigins = [process.env.clientUrl];
+// // Cors
+// const allowedOrigins = [process.env.clientUrl];
+// console.log(allowedOrigins);
 
-const corsOptions = {
-  origin(origin, callback) {
-    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
+// const corsOptions = {
+//   origin(origin, callback) {
+//     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+// };
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -47,7 +48,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors(corsOptions));
+app.use(cors({ credentials: true, origin: process.env.clientUrl }));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
