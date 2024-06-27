@@ -1,6 +1,6 @@
 # vigo-case-study
 
-# [Live Preview](https://odin-blog-api.vercel.app/blog-api/v1/)
+# [Live Preview](https://vigo-case-study-client.onrender.com/)
 
 ## Setup
 
