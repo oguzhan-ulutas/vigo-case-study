@@ -1,11 +1,14 @@
 const express = require('express');
+
 const router = express.Router();
 const Carrier = require('../models/Carrier');
 
 // Get all carriers
 router.get('/', async (req, res) => {
+  console.log('hello');
   try {
     const carriers = await Carrier.find();
+    console.log(carriers);
     res.json(carriers);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -26,22 +29,6 @@ router.patch('/:id', async (req, res) => {
 
     const updatedCarrier = await carrier.save();
     res.json(updatedCarrier);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-// Add new carrier (optional for initial setup)
-router.post('/', async (req, res) => {
-  const carrier = new Carrier({
-    name: req.body.name,
-    location: req.body.location,
-    phoneNumber: req.body.phoneNumber
-  });
-
-  try {
-    const newCarrier = await carrier.save();
-    res.status(201).json(newCarrier);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
