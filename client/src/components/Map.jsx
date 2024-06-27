@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import Button from "@mui/material/Button";
 
-const Map = () => {
+const Map = ({ setUserMessage, setUserLocation, userLocation }) => {
   const [carriers, setCarriers] = useState([]);
   const serverURL = import.meta.env.VITE_baseUrl;
 
@@ -24,13 +25,17 @@ const Map = () => {
 
   const handleCallCarrier = () => {
     // Get the closest carrier and send a message
-    console.log(navigator);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-        const userLocation = {
+        // const userLocation = {
+        //   lat: position.coords.latitude,
+        //   lng: position.coords.longitude,
+        // };
+
+        setUserLocation({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
-        };
+        });
 
         const closestCarrier = carriers.reduce((prev, curr) => {
           const prevDistance = Math.sqrt(
@@ -55,7 +60,8 @@ const Map = () => {
             if (!response.ok) {
               throw new Error("Network response was not ok");
             }
-            alert("Carrier is on the way!");
+            // alert("Carrier is on the way!");
+            setUserMessage("Carrier is on the way!");
           })
           .catch((error) => {
             console.error("Error updating carrier location", error);
@@ -88,7 +94,14 @@ const Map = () => {
           </Marker>
         ))}
       </MapContainer>
-      <button onClick={handleCallCarrier}>Call Carrier</button>
+
+      <Button
+        sx={{ margin: "10px" }}
+        variant="contained"
+        onClick={handleCallCarrier}
+      >
+        Call Carrier
+      </Button>
     </div>
   );
 };
