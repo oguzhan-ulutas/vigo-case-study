@@ -3,11 +3,11 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import Button from "@mui/material/Button";
 
-const Map = ({ setUserMessage, setUserLocation, userLocation }) => {
+const Map = ({ setUserMessage, setUserLocation, userLocation, setCarrier }) => {
   const [carriers, setCarriers] = useState([]);
   const serverURL = import.meta.env.VITE_baseUrl;
 
-  useEffect(() => {
+  const fetchCarriers = () => {
     fetch(`${serverURL}/carriers`)
       .then((response) => {
         if (!response.ok) {
@@ -21,55 +21,45 @@ const Map = ({ setUserMessage, setUserLocation, userLocation }) => {
       .catch((error) => {
         console.error("There was an error fetching the carriers!", error);
       });
+  };
+
+  useEffect(() => {
+    fetchCarriers();
   }, []);
 
   const handleCallCarrier = () => {
     // Get the closest carrier and send a message
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        // const userLocation = {
-        //   lat: position.coords.latitude,
-        //   lng: position.coords.longitude,
-        // };
+    const closestCarrier = carriers.reduce((prev, curr) => {
+      const prevDistance = Math.sqrt(
+        Math.pow(prev.location.lat - userLocation.lat, 2) +
+          Math.pow(prev.location.lng - userLocation.lng, 2)
+      );
+      const currDistance = Math.sqrt(
+        Math.pow(curr.location.lat - userLocation.lat, 2) +
+          Math.pow(curr.location.lng - userLocation.lng, 2)
+      );
+      return prevDistance < currDistance ? prev : curr;
+    });
+    setCarrier(closestCarrier);
 
-        setUserLocation({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-
-        const closestCarrier = carriers.reduce((prev, curr) => {
-          const prevDistance = Math.sqrt(
-            Math.pow(prev.location.lat - userLocation.lat, 2) +
-              Math.pow(prev.location.lng - userLocation.lng, 2)
-          );
-          const currDistance = Math.sqrt(
-            Math.pow(curr.location.lat - userLocation.lat, 2) +
-              Math.pow(curr.location.lng - userLocation.lng, 2)
-          );
-          return prevDistance < currDistance ? prev : curr;
-        });
-
-        fetch(`${serverURL}/carriers/${closestCarrier._id}`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ location: userLocation }),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Network response was not ok");
-            }
-            // alert("Carrier is on the way!");
-            setUserMessage("Carrier is on the way!");
-          })
-          .catch((error) => {
-            console.error("Error updating carrier location", error);
-          });
+    fetch(`${serverURL}/carriers/${closestCarrier._id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ location: userLocation }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        setUserMessage(`${closestCarrier.name} is on the way!`);
+        // Fetch carriers to renew map
+        fetchCarriers();
+      })
+      .catch((error) => {
+        console.error("Error updating carrier location", error);
       });
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
   };
 
   return (
