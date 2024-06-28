@@ -55,6 +55,43 @@ function App() {
     }
   }, []);
 
+  // Get the closest carrier and delete him/her from carriers array in case he refuse the call.
+  const findClosestCarrier = () => {
+    setStateOfCarrier("searching");
+
+    const closestCarrier = carriers.reduce((prev, curr) => {
+      const prevDistance = Math.sqrt(
+        Math.pow(prev.location.lat - userLocation.lat, 2) +
+          Math.pow(prev.location.lng - userLocation.lng, 2)
+      );
+      const currDistance = Math.sqrt(
+        Math.pow(curr.location.lat - userLocation.lat, 2) +
+          Math.pow(curr.location.lng - userLocation.lng, 2)
+      );
+      return prevDistance < currDistance ? prev : curr;
+    });
+
+    if (closestCarrier) {
+      setStateOfCarrier("found");
+    }
+
+    // Delete closestCarrier from carriers state
+    const updatedCarriers = carriers.filter(
+      (carrier) => carrier !== closestCarrier
+    );
+    console.log(closestCarrier);
+
+    setCarriers(updatedCarriers);
+
+    return closestCarrier;
+  };
+
+  const handleCallCarrier = () => {
+    const closestCarrier = findClosestCarrier();
+
+    setCarrier(closestCarrier);
+  };
+
   const changeCarrierLocation = () => {
     fetch(`${serverURL}/carriers/${closestCarrier._id}`, {
       method: "PATCH",
@@ -91,6 +128,7 @@ function App() {
         setStateOfCarrier={setStateOfCarrier}
         carrier={carrier}
         carriers={carriers}
+        handleCallCarrier={handleCallCarrier}
       />
 
       <Box display={"flex"} gap={"20px"}>
