@@ -61,7 +61,10 @@ function App() {
   const findClosestCarrier = () => {
     setStateOfCarrier("searching");
 
-    const closestCarrier = carriers.reduce((prev, curr) => {
+    const availableCarriers = carriers.filter(
+      (carrier) => carrier.status !== "rejected"
+    );
+    const closestCarrier = availableCarriers.reduce((prev, curr) => {
       const prevDistance = Math.sqrt(
         Math.pow(prev.location.lat - userLocation.lat, 2) +
           Math.pow(prev.location.lng - userLocation.lng, 2)
@@ -76,7 +79,7 @@ function App() {
     if (closestCarrier) {
       setTimeout(() => {
         setStateOfCarrier("found");
-      }, 3000);
+      }, 1000);
     }
 
     return closestCarrier;
@@ -148,9 +151,10 @@ function App() {
           userLocation={userLocation}
           carrier={carrier}
           stateOfCarrier={stateOfCarrier}
-          setStateOfCarrier={setStateOfCarrier}
           changeCarrierLocation={changeCarrierLocation}
           updateCarrierStatus={updateCarrierStatus}
+          fetchCarriers={fetchCarriers}
+          handleCallCarrier={handleCallCarrier}
         />
       </Box>
     </>

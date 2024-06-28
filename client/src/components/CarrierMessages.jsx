@@ -6,8 +6,10 @@ const CarrierMessages = ({
   userLocation,
   carrier,
   stateOfCarrier,
-  setStateOfCarrier,
   updateCarrierStatus,
+  changeCarrierLocation,
+  fetchCarriers,
+  handleCallCarrier,
 }) => {
   return (
     <Box
@@ -42,11 +44,19 @@ const CarrierMessages = ({
               variant="contained"
               onClick={() => {
                 updateCarrierStatus("rejected");
+                setTimeout(() => {
+                  fetchCarriers();
+                  handleCallCarrier();
+                }, 2000);
               }}
             >
               Reject
             </Button>
           </>
+        ) : null}
+
+        {stateOfCarrier === "rejected" ? (
+          <p>You will be able to take new request in 30 minutes.</p>
         ) : null}
 
         {stateOfCarrier === "accepted" ? (
@@ -60,6 +70,7 @@ const CarrierMessages = ({
               variant="contained"
               onClick={() => {
                 updateCarrierStatus("arrived");
+                changeCarrierLocation();
               }}
             >
               Arrived

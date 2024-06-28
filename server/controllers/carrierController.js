@@ -5,7 +5,9 @@ exports.getAllCarriers = async (req, res) => {
   try {
     const carriers = await Carrier.find();
 
-    res.json(carriers);
+    availableCarriers = carriers.filter((carrier) => carrier.status !== 'rejected');
+
+    res.json(availableCarriers);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
