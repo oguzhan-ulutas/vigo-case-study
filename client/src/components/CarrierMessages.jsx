@@ -7,6 +7,7 @@ const CarrierMessages = ({
   carrier,
   stateOfCarrier,
   setStateOfCarrier,
+  changeCarrierStatus,
 }) => {
   return (
     <Box
@@ -31,7 +32,11 @@ const CarrierMessages = ({
               sx={{ margin: "10px" }}
               variant="contained"
               onClick={() => {
-                setStateOfCarrier("accepted");
+                setTimeout(() => {
+                  setStateOfCarrier("accepted");
+                }, 3000);
+
+                changeCarrierStatus("accepted");
               }}
             >
               Accept
@@ -40,10 +45,12 @@ const CarrierMessages = ({
               sx={{ margin: "10px" }}
               variant="contained"
               onClick={() => {
-                setStateOfCarrier("declined");
+                setTimeout(() => {
+                  setStateOfCarrier("rejected");
+                }, 3000);
               }}
             >
-              Decline
+              Reject
             </Button>
           </>
         ) : null}

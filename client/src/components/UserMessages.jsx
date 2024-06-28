@@ -32,7 +32,7 @@ const UserMessages = ({ userMessage, stateOfCarrier, carrier }) => {
       </p>
 
       <p>
-        {stateOfCarrier === "declined"
+        {stateOfCarrier === "rejected"
           ? "Searching for a new carrier..."
           : null}
       </p>

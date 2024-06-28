@@ -19,7 +19,7 @@ function App() {
   const [carriers, setCarriers] = useState([]);
   const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
   const [carrier, setCarrier] = useState({});
-  const [stateOfCarrier, setStateOfCarrier] = useState("found");
+  const [stateOfCarrier, setStateOfCarrier] = useState("");
 
   const serverURL = import.meta.env.VITE_baseUrl;
 
@@ -74,16 +74,10 @@ function App() {
     });
 
     if (closestCarrier) {
-      setStateOfCarrier("found");
+      setTimeout(() => {
+        setStateOfCarrier("found");
+      }, 3000);
     }
-
-    // Delete closestCarrier from carriers state
-    const updatedCarriers = carriers.filter(
-      (carrier) => carrier !== closestCarrier
-    );
-    console.log(closestCarrier);
-
-    setCarriers(updatedCarriers);
 
     return closestCarrier;
   };
@@ -95,7 +89,7 @@ function App() {
   };
 
   const changeCarrierLocation = () => {
-    fetch(`${serverURL}/carriers/${closestCarrier._id}`, {
+    fetch(`${serverURL}/carriers/${carrier._id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -113,13 +107,27 @@ function App() {
       });
   };
 
-  // Set 3 seconds delay for every change of the stateOfCarrier
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {}, 3000);
-
-    // Clean up the timeout when the component unmounts
-    return () => clearTimeout(timeoutId);
-  }, [stateOfCarrier]);
+  const changeCarrierStatus = (status) => {
+    fetch(`${serverURL}/carriers/${carrier._id}/changeStatus`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ carrierId: carrier._id, status }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((response) => {
+        setCarrier(response);
+      })
+      .catch((error) => {
+        console.error("Error updating carrier status", error);
+      });
+  };
 
   return (
     <>
@@ -137,6 +145,7 @@ function App() {
           stateOfCarrier={stateOfCarrier}
           setStateOfCarrier={setStateOfCarrier}
           changeCarrierLocation={changeCarrierLocation}
+          changeCarrierStatus={changeCarrierStatus}
         />
       </Box>
     </>

@@ -21,7 +21,7 @@ const carrierSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['idle', 'accepted', 'rejected', 'arrived'],
+    enum: ['idle', 'found', 'accepted', 'rejected', 'arrived'],
     default: 'idle',
   },
 });
