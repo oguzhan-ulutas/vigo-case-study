@@ -2,10 +2,15 @@ import React from "react";
 import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
 
-const CarrierMessages = ({ userLocation, carrier, stateOfCarrier }) => {
+const CarrierMessages = ({
+  userLocation,
+  carrier,
+  stateOfCarrier,
+  setStateOfCarrier,
+}) => {
   return (
     <Box
-      height={200}
+      minHeight={200}
       width={400}
       my={4}
       display="flex"
@@ -19,12 +24,27 @@ const CarrierMessages = ({ userLocation, carrier, stateOfCarrier }) => {
         {stateOfCarrier === "found" ? (
           <>
             <p>
-              `Hello ${carrier.name}.The client's location is $
-              {userLocation.lat} lat, ${userLocation.lng} lng. Do you want to
-              except the task?`
+              Hello {carrier.name}.The client's location is {userLocation.lat}{" "}
+              lat, {userLocation.lng} lng. Do you want to except the task?
             </p>
-            <Button>Except</Button>
-            <Button>Decline</Button>
+            <Button
+              sx={{ margin: "10px" }}
+              variant="contained"
+              onClick={() => {
+                setStateOfCarrier("accepted");
+              }}
+            >
+              Accept
+            </Button>
+            <Button
+              sx={{ margin: "10px" }}
+              variant="contained"
+              onClick={() => {
+                setStateOfCarrier("declined");
+              }}
+            >
+              Decline
+            </Button>
           </>
         ) : null}
       </div>

@@ -15,35 +15,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-const Map = ({
-  setUserMessage,
-  userLocation,
-  setCarrier,
-  setStateOfCarrier,
-}) => {
-  const [carriers, setCarriers] = useState([]);
-  const serverURL = import.meta.env.VITE_baseUrl;
-
-  const fetchCarriers = () => {
-    fetch(`${serverURL}/carriers`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setCarriers(data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the carriers!", error);
-      });
-  };
-
-  useEffect(() => {
-    fetchCarriers();
-  }, []);
-
+const Map = ({ carriers, userLocation, setCarrier, setStateOfCarrier }) => {
   // Get the closest carrier and delete him/her from carriers array in case he refuse the call.
   const findClosestCarrier = () => {
     setStateOfCarrier("searching");
@@ -68,6 +40,7 @@ const Map = ({
     const updatedCarriers = carriers.filter(
       (carrier) => carrier !== closestCarrier
     );
+    console.log(closestCarrier);
 
     setCarriers(updatedCarriers);
 
@@ -78,25 +51,6 @@ const Map = ({
     const closestCarrier = findClosestCarrier();
 
     setCarrier(closestCarrier);
-
-    fetch(`${serverURL}/carriers/${closestCarrier._id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ location: userLocation }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        setUserMessage(`${closestCarrier.name} is on the way!`);
-        // Fetch carriers to renew map
-        fetchCarriers();
-      })
-      .catch((error) => {
-        console.error("Error updating carrier location", error);
-      });
   };
 
   return (

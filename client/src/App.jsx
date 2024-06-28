@@ -6,10 +6,40 @@ import CarrierMessages from "./components/CarrierMessages";
 import { Box } from "@mui/material";
 
 function App() {
-  const [userMessage, setUserMessage] = useState("");
+  const [carriers, setCarriers] = useState([]);
   const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
-  const [carrier, setCarrier] = useState(null);
-  const [stateOfCarrier, setStateOfCarrier] = useState("");
+  const [carrier, setCarrier] = useState({
+    location: {
+      lat: 40.9126884,
+      lng: 29.1546861,
+    },
+    _id: "667d351871d8ee797a73dc8f",
+    name: "Carrier Three",
+    phoneNumber: "+1122334455",
+  });
+  const [stateOfCarrier, setStateOfCarrier] = useState("accepted");
+
+  const serverURL = import.meta.env.VITE_baseUrl;
+
+  const fetchCarriers = () => {
+    fetch(`${serverURL}/carriers`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setCarriers(data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the carriers!", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchCarriers();
+  }, []);
 
   useEffect(() => {
     // Setup user location
@@ -25,6 +55,25 @@ function App() {
     }
   }, []);
 
+  const changeCarrierLocation = () => {
+    fetch(`${serverURL}/carriers/${closestCarrier._id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ location: userLocation }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        fetchCarriers();
+      })
+      .catch((error) => {
+        console.error("Error updating carrier location", error);
+      });
+  };
+
   // Set 3 seconds delay for every change of the stateOfCarrier
   useEffect(() => {
     const timeoutId = setTimeout(() => {}, 3000);
@@ -36,22 +85,22 @@ function App() {
   return (
     <>
       <Map
-        setUserMessage={setUserMessage}
         userLocation={userLocation}
         setUserLocation={setUserLocation}
         setCarrier={setCarrier}
         setStateOfCarrier={setStateOfCarrier}
+        carrier={carrier}
+        carriers={carriers}
       />
 
       <Box display={"flex"} gap={"20px"}>
-        <UserMessages
-          userMessage={userMessage}
-          stateOfCarrier={stateOfCarrier}
-        />
+        <UserMessages stateOfCarrier={stateOfCarrier} carrier={carrier} />
         <CarrierMessages
           userLocation={userLocation}
           carrier={carrier}
           stateOfCarrier={stateOfCarrier}
+          setStateOfCarrier={setStateOfCarrier}
+          changeCarrierLocation={changeCarrierLocation}
         />
       </Box>
     </>
