@@ -15,13 +15,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-const Map = ({
-  carriers,
-  userLocation,
-  setCarrier,
-  setStateOfCarrier,
-  handleCallCarrier,
-}) => {
+const Map = ({ carriers, handleCallCarrier }) => {
   return (
     <div>
       <MapContainer
@@ -33,16 +27,18 @@ const Map = ({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
-        {carriers.map((carrier) => (
-          <Marker
-            key={carrier._id}
-            position={[carrier.location.lat, carrier.location.lng]}
-          >
-            <Popup>
-              {carrier.name} <br /> {carrier.phoneNumber}
-            </Popup>
-          </Marker>
-        ))}
+        {carriers[0]
+          ? carriers.map((carrier) => (
+              <Marker
+                key={carrier._id}
+                position={[carrier.location.lat, carrier.location.lng]}
+              >
+                <Popup>
+                  {carrier.name} <br /> {carrier.phoneNumber}
+                </Popup>
+              </Marker>
+            ))
+          : null}
       </MapContainer>
 
       <Button

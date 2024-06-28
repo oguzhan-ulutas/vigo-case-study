@@ -5,19 +5,21 @@ import UserMessages from "./components/UserMessages";
 import CarrierMessages from "./components/CarrierMessages";
 import { Box } from "@mui/material";
 
+const dummyCarrier = {
+  location: {
+    lat: 40.9126884,
+    lng: 29.1546861,
+  },
+  _id: "667d351871d8ee797a73dc8f",
+  name: "Carrier Three",
+  phoneNumber: "+112233445",
+};
+
 function App() {
   const [carriers, setCarriers] = useState([]);
   const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
-  const [carrier, setCarrier] = useState({
-    location: {
-      lat: 40.9126884,
-      lng: 29.1546861,
-    },
-    _id: "667d351871d8ee797a73dc8f",
-    name: "Carrier Three",
-    phoneNumber: "+1122334455",
-  });
-  const [stateOfCarrier, setStateOfCarrier] = useState("accepted");
+  const [carrier, setCarrier] = useState({});
+  const [stateOfCarrier, setStateOfCarrier] = useState("found");
 
   const serverURL = import.meta.env.VITE_baseUrl;
 
@@ -122,13 +124,9 @@ function App() {
   return (
     <>
       <Map
-        userLocation={userLocation}
-        setUserLocation={setUserLocation}
-        setCarrier={setCarrier}
-        setStateOfCarrier={setStateOfCarrier}
-        carrier={carrier}
         carriers={carriers}
         handleCallCarrier={handleCallCarrier}
+        fetchCarriers={fetchCarriers}
       />
 
       <Box display={"flex"} gap={"20px"}>
