@@ -15,15 +15,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-// // Fix for missing default icon issue in Leaflet
-// delete L.Icon.Default.prototype._getIconUrl;
-
-// L.Icon.Default.mergeOptions({
-//   iconRetinaUrl: "../assets/marker-icon-2x.png",
-//   iconUrl: "../assets/marker-icon.png",
-//   shadowUrl: "../assets/marker-shadow.png",
-// });
-
 const Map = ({ setUserMessage, setUserLocation, userLocation, setCarrier }) => {
   const [carriers, setCarriers] = useState([]);
   const serverURL = import.meta.env.VITE_baseUrl;
@@ -48,8 +39,8 @@ const Map = ({ setUserMessage, setUserLocation, userLocation, setCarrier }) => {
     fetchCarriers();
   }, []);
 
-  const handleCallCarrier = () => {
-    // Get the closest carrier and send a message
+  // Get the closest carrier and delete him/her from carriers array in case he refuse the call.
+  const findClosestCarrier = () => {
     const closestCarrier = carriers.reduce((prev, curr) => {
       const prevDistance = Math.sqrt(
         Math.pow(prev.location.lat - userLocation.lat, 2) +
@@ -61,6 +52,20 @@ const Map = ({ setUserMessage, setUserLocation, userLocation, setCarrier }) => {
       );
       return prevDistance < currDistance ? prev : curr;
     });
+
+    // Delete closestCarrier from carriers state
+    const updatedCarriers = carriers.filter(
+      (carrier) => carrier !== closestCarrier
+    );
+
+    setCarriers(updatedCarriers);
+
+    return closestCarrier;
+  };
+
+  const handleCallCarrier = () => {
+    const closestCarrier = findClosestCarrier();
+
     setCarrier(closestCarrier);
 
     fetch(`${serverURL}/carriers/${closestCarrier._id}`, {
