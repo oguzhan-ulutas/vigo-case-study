@@ -9,6 +9,7 @@ function App() {
   const [userMessage, setUserMessage] = useState("");
   const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 });
   const [carrier, setCarrier] = useState(null);
+  const [stateOfCarrier, setStateOfCarrier] = useState("");
 
   useEffect(() => {
     // Setup user location
@@ -24,6 +25,14 @@ function App() {
     }
   }, []);
 
+  // Set 3 seconds delay for every change of the stateOfCarrier
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {}, 3000);
+
+    // Clean up the timeout when the component unmounts
+    return () => clearTimeout(timeoutId);
+  }, [stateOfCarrier]);
+
   return (
     <>
       <Map
@@ -31,11 +40,19 @@ function App() {
         userLocation={userLocation}
         setUserLocation={setUserLocation}
         setCarrier={setCarrier}
+        setStateOfCarrier={setStateOfCarrier}
       />
 
       <Box display={"flex"} gap={"20px"}>
-        <UserMessages userMessage={userMessage} />
-        <CarrierMessages userLocation={userLocation} carrier={carrier} />
+        <UserMessages
+          userMessage={userMessage}
+          stateOfCarrier={stateOfCarrier}
+        />
+        <CarrierMessages
+          userLocation={userLocation}
+          carrier={carrier}
+          stateOfCarrier={stateOfCarrier}
+        />
       </Box>
     </>
   );

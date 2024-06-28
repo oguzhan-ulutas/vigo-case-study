@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
 
-const UserMessages = ({ userMessage }) => {
+const UserMessages = ({ userMessage, stateOfCarrier }) => {
   return (
     <Box
       height={200}
@@ -14,7 +14,14 @@ const UserMessages = ({ userMessage }) => {
       sx={{ border: "2px solid grey" }}
     >
       <h2>User Messages: </h2>
-      <p>{userMessage ? userMessage : null}</p>
+      <p>
+        {stateOfCarrier === "searching" ? "Searching for a carrier..." : null}
+      </p>
+      <p>
+        {stateOfCarrier === "found"
+          ? "A carrier has been found, waiting for an answer..."
+          : null}
+      </p>
     </Box>
   );
 };

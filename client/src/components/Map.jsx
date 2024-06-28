@@ -15,7 +15,12 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow,
 });
 
-const Map = ({ setUserMessage, setUserLocation, userLocation, setCarrier }) => {
+const Map = ({
+  setUserMessage,
+  userLocation,
+  setCarrier,
+  setStateOfCarrier,
+}) => {
   const [carriers, setCarriers] = useState([]);
   const serverURL = import.meta.env.VITE_baseUrl;
 
@@ -41,6 +46,8 @@ const Map = ({ setUserMessage, setUserLocation, userLocation, setCarrier }) => {
 
   // Get the closest carrier and delete him/her from carriers array in case he refuse the call.
   const findClosestCarrier = () => {
+    setStateOfCarrier("searching");
+
     const closestCarrier = carriers.reduce((prev, curr) => {
       const prevDistance = Math.sqrt(
         Math.pow(prev.location.lat - userLocation.lat, 2) +
@@ -52,6 +59,10 @@ const Map = ({ setUserMessage, setUserLocation, userLocation, setCarrier }) => {
       );
       return prevDistance < currDistance ? prev : curr;
     });
+
+    if (closestCarrier) {
+      setStateOfCarrier("found");
+    }
 
     // Delete closestCarrier from carriers state
     const updatedCarriers = carriers.filter(
