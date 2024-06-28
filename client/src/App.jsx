@@ -107,13 +107,13 @@ function App() {
       });
   };
 
-  const changeCarrierStatus = (status) => {
-    fetch(`${serverURL}/carriers/${carrier._id}/changeStatus`, {
+  const updateCarrierStatus = (status) => {
+    fetch(`${serverURL}/carriers/${carrier._id}/update-status`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ carrierId: carrier._id, status }),
+      body: JSON.stringify({ status }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -123,6 +123,7 @@ function App() {
       })
       .then((response) => {
         setCarrier(response);
+        setStateOfCarrier(response.status);
       })
       .catch((error) => {
         console.error("Error updating carrier status", error);
@@ -138,14 +139,18 @@ function App() {
       />
 
       <Box display={"flex"} gap={"20px"}>
-        <UserMessages stateOfCarrier={stateOfCarrier} carrier={carrier} />
+        <UserMessages
+          stateOfCarrier={stateOfCarrier}
+          carrier={carrier}
+          updateCarrierStatus={updateCarrierStatus}
+        />
         <CarrierMessages
           userLocation={userLocation}
           carrier={carrier}
           stateOfCarrier={stateOfCarrier}
           setStateOfCarrier={setStateOfCarrier}
           changeCarrierLocation={changeCarrierLocation}
-          changeCarrierStatus={changeCarrierStatus}
+          updateCarrierStatus={updateCarrierStatus}
         />
       </Box>
     </>

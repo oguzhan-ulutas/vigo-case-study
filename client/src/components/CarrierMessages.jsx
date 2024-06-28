@@ -7,7 +7,7 @@ const CarrierMessages = ({
   carrier,
   stateOfCarrier,
   setStateOfCarrier,
-  changeCarrierStatus,
+  updateCarrierStatus,
 }) => {
   return (
     <Box
@@ -32,11 +32,7 @@ const CarrierMessages = ({
               sx={{ margin: "10px" }}
               variant="contained"
               onClick={() => {
-                setTimeout(() => {
-                  setStateOfCarrier("accepted");
-                }, 3000);
-
-                changeCarrierStatus("accepted");
+                updateCarrierStatus("accepted");
               }}
             >
               Accept
@@ -45,14 +41,34 @@ const CarrierMessages = ({
               sx={{ margin: "10px" }}
               variant="contained"
               onClick={() => {
-                setTimeout(() => {
-                  setStateOfCarrier("rejected");
-                }, 3000);
+                updateCarrierStatus("rejected");
               }}
             >
               Reject
             </Button>
           </>
+        ) : null}
+
+        {stateOfCarrier === "accepted" ? (
+          <>
+            <p>
+              Client is waiting for you. Please reach the client as soon as
+              possible!
+            </p>
+            <Button
+              sx={{ margin: "10px" }}
+              variant="contained"
+              onClick={() => {
+                updateCarrierStatus("arrived");
+              }}
+            >
+              Arrived
+            </Button>
+          </>
+        ) : null}
+
+        {stateOfCarrier === "arrived" ? (
+          <p>Thank you for your service. Please wait for next call.</p>
         ) : null}
       </div>
     </Box>

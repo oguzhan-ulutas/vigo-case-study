@@ -16,7 +16,6 @@ L.Icon.Default.mergeOptions({
 });
 
 const Map = ({ carriers, handleCallCarrier }) => {
-  console.log(carriers);
   return (
     <div>
       <MapContainer

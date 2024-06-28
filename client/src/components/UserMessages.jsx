@@ -1,7 +1,8 @@
 import React from "react";
 import Box from "@mui/material/Box";
+import { Button } from "@mui/material";
 
-const UserMessages = ({ userMessage, stateOfCarrier, carrier }) => {
+const UserMessages = ({ updateCarrierStatus, stateOfCarrier, carrier }) => {
   return (
     <Box
       minHeight={200}
@@ -15,27 +16,35 @@ const UserMessages = ({ userMessage, stateOfCarrier, carrier }) => {
     >
       <h2>User Messages: </h2>
 
-      <p>
-        {stateOfCarrier === "searching" ? "Searching for a carrier..." : null}
-      </p>
+      <div>
+        {stateOfCarrier === "searching" ? (
+          <p>Searching for a carrier...</p>
+        ) : null}
 
-      <p>
-        {stateOfCarrier === "found"
-          ? "A carrier has been found, waiting for an answer..."
-          : null}
-      </p>
+        {stateOfCarrier === "found" ? (
+          <p>A carrier has been found, waiting for an answer...</p>
+        ) : null}
 
-      <p>
         {stateOfCarrier === "accepted"
           ? `${carrier.name} is on the way...`
           : null}
-      </p>
 
-      <p>
-        {stateOfCarrier === "rejected"
-          ? "Searching for a new carrier..."
-          : null}
-      </p>
+        {stateOfCarrier === "rejected" ? (
+          <p>Searching for a new carrier...</p>
+        ) : null}
+
+        {stateOfCarrier === "arrived" ? (
+          <Button
+            sx={{ margin: "10px" }}
+            variant="contained"
+            onClick={() => {
+              updateCarrierStatus("idle");
+            }}
+          >
+            I took my delivery
+          </Button>
+        ) : null}
+      </div>
     </Box>
   );
 };
